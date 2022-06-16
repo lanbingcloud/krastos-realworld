@@ -8,7 +8,7 @@ import "google/protobuf/timestamp.proto";
 option go_package = "kratos-realworld/api/realworld/v1;v1";
 
 service RealWorld {
-  rpc Login(LoginRequest) returns (UserReplay) {
+  rpc Login(LoginRequest) returns (UserReply) {
     option (google.api.http) = {
       post: "/api/users/login",
       body: "*",
@@ -16,7 +16,7 @@ service RealWorld {
     };
   }
 
-  rpc Register(RegisterRequest) returns (UserReplay) {
+  rpc Register(RegisterRequest) returns (UserReply) {
     option (google.api.http) = {
       post: "/api/users",
       body: "*",
@@ -24,14 +24,14 @@ service RealWorld {
     };
   }
 
-  rpc GetCurrentUser(GetCurrentUserRequest) returns (UserReplay) {
+  rpc GetCurrentUser(GetCurrentUserRequest) returns (UserReply) {
     option (google.api.http) = {
       get: "/api/user",
 
     };
   }
 
-  rpc UpdateUser(UpdateUserRequest) returns (UserReplay) {
+  rpc UpdateUser(UpdateUserRequest) returns (UserReply) {
     option (google.api.http) = {
       put: "/api/user",
       body: "*",
@@ -39,14 +39,14 @@ service RealWorld {
     };
   }
 
-  rpc GetProfile(GetProfileRequest) returns (ProfileReplay) {
+  rpc GetProfile(GetProfileRequest) returns (ProfileReply) {
     option (google.api.http) = {
       get: "/api/profiles/{username}",
 
     };
   }
 
-  rpc FollowUser(FollowUserRequest) returns (ProfileReplay) {
+  rpc FollowUser(FollowUserRequest) returns (ProfileReply) {
     option (google.api.http) = {
       post: "/api/profiles/{username}/follow",
       body: "*",
@@ -54,35 +54,35 @@ service RealWorld {
     };
   }
 
- rpc UnfollowUser(UnFollowUserRequest) returns (ProfileReplay) {
+ rpc UnfollowUser(UnFollowUserRequest) returns (ProfileReply) {
     option (google.api.http) = {
       delete: "/api/profiles/{username}/unfollow",
 
     };
   }
 
-  rpc ListArticles(ListArticlesRequest) returns (MultipleArticlesReplay) {
+  rpc ListArticles(ListArticlesRequest) returns (MultipleArticlesReply) {
     option (google.api.http) = {
       get: "/api/articles",
 
     };
   }
 
-  rpc FeedArticles(FeedArticlesRequest) returns (MultipleArticlesReplay) {
+  rpc FeedArticles(FeedArticlesRequest) returns (MultipleArticlesReply) {
     option (google.api.http) = {
       get: "/api/articles/feed",
 
     };
   }
 
-  rpc GetArticles(GetArticleRequest) returns (MultipleArticlesReplay) {
+  rpc GetArticles(GetArticleRequest) returns (MultipleArticlesReply) {
     option (google.api.http) = {
       get: "/api/articles/{slug}",
 
     };
   }
 
-  rpc CreateArticles(CreateArticleRequest) returns (SingleArticleReplay) {
+  rpc CreateArticles(CreateArticleRequest) returns (SingleArticleReply) {
     option (google.api.http) = {
       post: "/api/articles",
       body: "*"
@@ -90,7 +90,7 @@ service RealWorld {
     };
   }
 
-  rpc UpdateArticles(UpdateArticleRequest) returns (SingleArticleReplay) {
+  rpc UpdateArticles(UpdateArticleRequest) returns (SingleArticleReply) {
     option (google.api.http) = {
       put: "/api/articles/{slug}",
       body: "*"
@@ -98,14 +98,14 @@ service RealWorld {
     };
   }
 
-  rpc DeleteArticles(DeleteArticleRequest) returns (SingleArticleReplay) {
+  rpc DeleteArticles(DeleteArticleRequest) returns (SingleArticleReply) {
     option (google.api.http) = {
       delete: "/api/articles/{slug}",
 
     };
   }
 
-  rpc AddComment(AddCommentRequest) returns (SingleCommentReplay) {
+  rpc AddComment(AddCommentRequest) returns (SingleCommentReply) {
     option (google.api.http) = {
       post: "/api/articles/{slug}/comments",
       body: "*"
@@ -113,21 +113,21 @@ service RealWorld {
     };
   }
 
-  rpc GetComment(GetCommentRequest) returns (MultipleCommentsReplay) {
+  rpc GetComment(GetCommentRequest) returns (MultipleCommentsReply) {
     option (google.api.http) = {
       get: "/api/articles/{slug}/comments",
 
     };
   }
 
-  rpc DeleteComment(DeleteCommentRequest) returns (SingleCommentReplay) {
+  rpc DeleteComment(DeleteCommentRequest) returns (SingleCommentReply) {
     option (google.api.http) = {
       delete: "/api/articles/{slug}/comments/{id}",
 
     };
   }
 
-  rpc FavoriteArticle(FavoriteArticleRequest) returns (SingleArticleReplay) {
+  rpc FavoriteArticle(FavoriteArticleRequest) returns (SingleArticleReply) {
     option (google.api.http) = {
       post: "/api/articles/{slug}/favorite",
       body: "*"
@@ -135,14 +135,14 @@ service RealWorld {
     };
   }
 
-  rpc UnFavoriteArticle(UnFavoriteArticleRequest) returns (SingleArticleReplay) {
+  rpc UnFavoriteArticle(UnFavoriteArticleRequest) returns (SingleArticleReply) {
     option (google.api.http) = {
       delete: "/api/articles/{slug}/favorite",
 
     };
   }
 
-  rpc GetTags(GetTagsRequest) returns (ListTagsReplay) {
+  rpc GetTags(GetTagsRequest) returns (ListTagsReply) {
     option (google.api.http) = {
       delete: "/api/tags",
 
@@ -250,8 +250,8 @@ message UpdateUserRequest {
     User user = 1;
 }
 
-// All Replay
-message UserReplay {
+// All Reply
+message UserReply {
   message User {
     string email = 1;
     string token = 2;
@@ -262,14 +262,14 @@ message UserReplay {
   User user = 1;
 }
 
-message ProfileReplay {
+message ProfileReply {
   string username = 1;
   string bio = 2;
   string image = 3;
   bool following = 4;
 }
 
-message SingleArticleReplay {
+message SingleArticleReply {
 
     message Author {
         string username = 1;
@@ -294,7 +294,7 @@ message SingleArticleReplay {
     Article article = 1;
 }
 
-message MultipleArticlesReplay {
+message MultipleArticlesReply {
 
     message Author {
         string username = 1;
@@ -320,7 +320,7 @@ message MultipleArticlesReplay {
     uint32 articlesCount = 2;
 }
 
-message SingleCommentReplay {
+message SingleCommentReply {
 
     message Author {
         string username = 1;
@@ -340,7 +340,7 @@ message SingleCommentReplay {
     Comment comment = 1;
 }
 
-message MultipleCommentsReplay {
+message MultipleCommentsReply {
 
     message Author {
         string username = 1;
@@ -360,7 +360,7 @@ message MultipleCommentsReplay {
     repeated Comments comments = 1;
 }
 
-message ListTagsReplay {
+message ListTagsReply {
     repeated string tags = 1;
 }
 

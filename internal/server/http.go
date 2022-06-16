@@ -1,22 +1,42 @@
 package server
 
 import (
+	"context"
 	v1 "realworld/api/helloworld/v1"
 	"realworld/internal/conf"
+	"realworld/internal/pkg/middlewire/auth"
 	"realworld/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/swagger-api/openapiv2"
 )
 
+func NewSkipRoutersMatcher() selector.MatchFunc {
+	skipRouters := map[string]struct{}{
+		"/realworld.v1.RealWorld/Login":    {},
+		"/realworld.v1.RealWorld/Register": {},
+	}
+
+	return func(ctx context.Context, operation string) bool {
+		if _, ok := skipRouters[operation]; ok {
+			return false
+		}
+		return true
+	}
+}
+
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Server, realworld *service.RealWorldService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, jwtc *conf.JWT, realworld *service.RealWorldService, logger log.Logger) *http.Server {
 	openAPIhandler := openapiv2.NewHandler()
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			selector.Server(auth.JWTAuth(jwtc.Secret)).Match(NewSkipRoutersMatcher()).Build(),
+			logging.Server(logger),
 		),
 	}
 	if c.Http.Network != "" {

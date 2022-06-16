@@ -3,9 +3,10 @@ module realworld
 go 1.17
 
 require (
+	github.com/davecgh/go-spew v1.1.0
 	github.com/go-kratos/kratos/v2 v2.3.1
 	github.com/go-kratos/swagger-api v1.0.1
-	github.com/go-playground/assert/v2 v2.0.1
+	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/google/wire v0.5.0
 	github.com/stretchr/testify v1.7.1
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
@@ -17,7 +18,6 @@ require (
 )
 
 require (
-	github.com/davecgh/go-spew v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-kratos/grpc-gateway/v2 v2.5.1-0.20210811062259-c92d36e434b1 // indirect

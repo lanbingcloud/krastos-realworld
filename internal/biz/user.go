@@ -5,6 +5,9 @@ import (
 	"errors"
 	"fmt"
 
+	"realworld/internal/conf"
+	"realworld/internal/pkg/middlewire/auth"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -25,13 +28,13 @@ type UserLogin struct {
 	Image    string
 }
 
-func hashPassword(pwd string) ([]byte, error) {
+func hashPassword(pwd string) string {
 	b, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	fmt.Printf("hashPassword value is %v, %s | ", b, string(b))
-	return b, nil
+	fmt.Printf("%v", b)
+	return string(b)
 }
 
 func verifyPassword(hashed, pwd string) bool {
@@ -51,35 +54,36 @@ type ProgfileRepo interface{}
 
 // UserUsecase is a User usecase.
 type UserUsecase struct {
-	ur UserRepo
-	pr ProgfileRepo
+	ur   UserRepo
+	pr   ProgfileRepo
+	jwtc *conf.JWT
 
 	log *log.Helper
 }
 
 // NewUserUsecase new a User usecase.
-func NewUserUsecase(ur UserRepo, pr ProgfileRepo, logger log.Logger) *UserUsecase {
-	return &UserUsecase{ur: ur, pr: pr, log: log.NewHelper(logger)}
+func NewUserUsecase(ur UserRepo, pr ProgfileRepo, jwtc *conf.JWT, logger log.Logger) *UserUsecase {
+	return &UserUsecase{ur: ur, pr: pr, jwtc: jwtc, log: log.NewHelper(logger)}
+}
+
+func (uc *UserUsecase) generateToken(username string) string {
+	return auth.GenerateToken(string(uc.jwtc.Secret), username)
 }
 
 // CreateUser creates a User, and returns the new User.
 func (uc *UserUsecase) Register(ctx context.Context, email, username, password string) (*UserLogin, error) {
-	h, err := hashPassword(password)
-	if err != nil {
-		return nil, err
-	}
-	u := &User{
-		Email:        email,
-		Username:     username,
-		PasswordHash: string(h),
-	}
-	if err := uc.ur.CreateUser(ctx, u); err != nil {
-		return nil, err
-	}
+	// u := &User{
+	// 	Email:        email,
+	// 	Username:     username,
+	// 	PasswordHash: hashPassword(password),
+	// }
+	// if err := uc.ur.CreateUser(ctx, u); err != nil {
+	// 	return nil, err
+	// }
 	return &UserLogin{
 		Email:    email,
 		Username: username,
-		Token:    "xxx",
+		Token:    uc.generateToken(username),
 	}, nil
 }
 
@@ -96,6 +100,6 @@ func (uc *UserUsecase) Login(ctx context.Context, email string, password string)
 		Username: u.Username,
 		Bio:      u.Bio,
 		Image:    u.Image,
-		Token:    "xxx",
+		Token:    uc.generateToken(u.Username),
 	}, nil
 }
